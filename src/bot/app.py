@@ -1,10 +1,14 @@
 import os
+from datetime import datetime, timedelta
 
 from telethon import TelegramClient, events
 from telethon.tl.functions.channels import EditAdminRequest
 from telethon.tl.types import ChatAdminRights
 from const import COC_TO_TELEGRAM_MAPPING
 from decorator import user_is_chat_member
+from api_access import get_current_war
+import apscheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 token = os.environ.get('BOT_TOKEN', '')
 bot = TelegramClient('ybot', 16734569, '8c137eecf2abd641f472740daf3ab0fa').start(bot_token=token)
@@ -76,5 +80,37 @@ async def get_member_nick(event):
 async def ping(event):
     await event.respond('pong')
 
+
+@bot.on(events.NewMessage(pattern='/sendloserslist', from_users='danskiyq'))
+async def mention_members_if_losing(event=None):
+    cur_war = get_current_war()
+    date_time_format = "%Y%m%dT%H%M%S.%fZ"
+    end_time = datetime.strptime(cur_war['endTime'], date_time_format)
+    time_now = datetime.utcnow()
+
+    time_check = end_time - timedelta(hours=1) < time_now < end_time - timedelta(hours=2)
+
+    if cur_war['state'] == 'inWar':
+        if cur_war["clan"]["stars"] < cur_war["opponent"]["stars"] and time_check:
+            members_with_0_attacks = set()
+            for member in cur_war['clan']['members']:
+                if member.get("attacks") is None:
+                    nickname = COC_TO_TELEGRAM_MAPPING.get(member['name'])
+                    if nickname:
+                        members_with_0_attacks.add("@" + nickname)
+            if members_with_0_attacks:
+                message = "\n".join(members_with_0_attacks)
+                await bot.send_message(-1001718737807, f'Війна закінчиться менш ніж через 2 години, '
+                                                       f'та ми програємс, ({cur_war["clan"]["stars"]} : {cur_war["opponent"]["stars"]})'
+                                                       f'Але! Є люди без атак, ось список позору:\n {message}')
+                print('we are losing the war, sent message to chat')
+                return
+        print('war is in progress, but we are winning or not short on time')
+        return
+    print('war is not in progress')
+    return
+
 if __name__ == '__main__':
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(mention_members_if_losing, 'interval', hours=1)
     bot.run_until_disconnected()

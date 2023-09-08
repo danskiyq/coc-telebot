@@ -9,3 +9,4 @@ rsa==4.8
 telebot==0.0.5
 Telethon==1.29.3
 urllib3==1.26.9
+APScheduler~=3.10.4
