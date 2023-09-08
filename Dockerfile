@@ -5,4 +5,4 @@ COPY src/bot /src/bot
 ADD me.session /
 ADD ybot.session /
 
-CMD [ "python3", "src/bot/bot.py" ]
+CMD [ "python3", "src/bot/app.py" ]
