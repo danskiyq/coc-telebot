@@ -7,4 +7,5 @@ COC_TO_TELEGRAM_MAPPING = {
     "Бобёр": "danskiyq",
     "Semapis": "Semapis",
     "siostart": "vaaa_lii_k",
+    "seva": "melkomnet",
 }
