@@ -100,8 +100,9 @@ async def mention_members_if_losing(event=None):
                         members_with_0_attacks.add("@" + nickname)
             if members_with_0_attacks:
                 message = "\n".join(members_with_0_attacks)
-                await bot.send_message(-1001718737807, f'Війна закінчиться менш ніж через 2 години, '
-                                                       f'та ми програємс, ({cur_war["clan"]["stars"]} : {cur_war["opponent"]["stars"]})'
+                await bot.send_message(-1001718737807, f'Війна закінчиться менш ніж через 2 години,\n'
+                                                       f'та ми програємс, ({cur_war["clan"]["stars"]} :'
+                                                       f' {cur_war["opponent"]["stars"]})\n'
                                                        f'Але! Є люди без атак, ось список позору:\n {message}')
                 print('we are losing the war, sent message to chat')
                 return
