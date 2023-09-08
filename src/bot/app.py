@@ -1,18 +1,17 @@
-import logging
 import os
 
 from telethon import TelegramClient, events
 from telethon.tl.functions.channels import EditAdminRequest
 from telethon.tl.types import ChatAdminRights
 from const import COC_TO_TELEGRAM_MAPPING
-from decorator import user_request
+from decorator import user_is_chat_member
 
 token = os.environ.get('BOT_TOKEN', '')
 bot = TelegramClient('ybot', 16734569, '8c137eecf2abd641f472740daf3ab0fa').start(bot_token=token)
 rights = ChatAdminRights(
     invite_users=True,
 )
-logging.info('Bot hosting now')
+print('Bot hosting now')
 
 
 @bot.on(events.NewMessage(pattern='/start'))
@@ -21,17 +20,17 @@ async def start(event):
 
 
 @bot.on(events.NewMessage())
-@user_request(bot)
+@user_is_chat_member(bot)
 async def request(event):
-    logging.info(event.peer_id.user_id, 'authorised')
+    print(event.peer_id.user_id, 'authorised')
 
 
 @bot.on(events.NewMessage(pattern='/setnick'))
-@user_request(bot)
+@user_is_chat_member(bot)
 async def set_nick(event):
     nick = event.message.message[9:]
     if nick:
-        logging.info(event.peer_id.user_id, 'nick change', nick)
+        print(event.peer_id.user_id, 'nick change', nick)
         channel = await bot.get_entity(-1001718737807)
         # get rights of user and set to default if not admin else keep the same
         current_rights = await bot.get_permissions(channel, event.peer_id.user_id)

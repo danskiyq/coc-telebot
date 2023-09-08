@@ -1,6 +1,6 @@
 from functools import wraps
 
-def user_request(bot):
+def user_is_chat_member(bot):
 
     def user_request_wrapper(func):
         @wraps(func)
