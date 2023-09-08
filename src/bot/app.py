@@ -64,7 +64,7 @@ async def get_member_nick(event):
     if nick:
         if nick in COC_TO_TELEGRAM_MAPPING:
             await event.respond(
-                f"У людини з ніком: {nick} в клані,\nнік в телеграмі це: @{COC_TO_TELEGRAM_MAPPING[nick]}")
+                f"У людини з ніком {nick} в клані,\nнік в телеграмі це: @{COC_TO_TELEGRAM_MAPPING[nick]}")
             return
         await event.respond(f"Нік {nick} не знайдено")
     else:
